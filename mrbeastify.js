@@ -1,3 +1,4 @@
+console.log("getsuyoubify loaded");
 const IMAGES_PATH = "images/";
 let useAlternativeImages;
 let flipBlacklist;
@@ -123,15 +124,17 @@ function getImageURL(index) {
 }
 
 // Checks if an image exists in the image folder
-async function checkImageExistence(index) {
-    const testedURL = getImageURL(index)
-
-    return fetch(testedURL)
-        .then(() => {
-            return true
-        }).catch(error => {
-            return false
-        })
+function checkImageExistence(index) {
+    return new Promise(resolve => {
+        const img = new Image();
+        const timer = setTimeout(() => {
+            img.onload = img.onerror = null;
+            resolve(false); // give up if nothing happens
+        }, 2000);
+        img.onload = () => { clearTimeout(timer); resolve(true); };
+        img.onerror = () => { clearTimeout(timer); resolve(false); };
+        img.src = getImageURL(index);
+    });
 }
 
 ////////////////////////
@@ -263,12 +266,12 @@ async function Main() {
     await GetFlipBlocklist()
     console.info(`${EXTENSION_NAME} will now detect the amount of images. Ignore all the following errors.`)
     await getHighestImageIndex()
-        .then(() => {
-            setInterval(applyOverlayToThumbnails, 100);
-            console.info(
-                `${EXTENSION_NAME} Loaded Successfully. ${highestImageIndex} images detected. ${blacklistStatus}.`
-            );
-        })
+    .then(() => {
+        setInterval(applyOverlayToThumbnails, 100);
+        console.info(
+            `${EXTENSION_NAME} Loaded Successfully. ${highestImageIndex} images detected. ${blacklistStatus}.`
+        );
+    })
 }
 
 Main()
