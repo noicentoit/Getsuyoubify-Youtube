@@ -8,7 +8,7 @@
     },
     "manifest_version": 2,
     "name": "YouTube Getsuyoubify",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "icons": {
         "96": "icon.png"
     },
